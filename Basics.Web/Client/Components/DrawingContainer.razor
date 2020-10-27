@@ -1,0 +1,36 @@
+﻿@namespace Basics.Web.Components
+@inject IJSRuntime JSRuntime;
+
+<canvas @ref="myCanvas" id="@CanvasID" width="@Width" height="@Height"></canvas>
+
+@code {
+    private ElementReference myCanvas = default;
+
+    public event EventHandler ControlReady;
+
+
+    [Parameter]
+    public string CanvasID { get; set; } = "drawingCanvas";
+
+    [Parameter]
+    public int Width { get; set; } = 640;
+
+    [Parameter]
+    public int Height { get; set; } = 480;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.Setup", CanvasID);
+            if (ControlReady != null)
+                ControlReady(this, new EventArgs());
+        }
+    }
+
+    public async Task DrawPoint(Basics.Geometry.Point2D point)
+    {
+        if (!string.IsNullOrWhiteSpace(myCanvas.Id))
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawPoint", point.X, point.Y, 5);
+    }
+}
