@@ -12,9 +12,9 @@ namespace Basics.Web.Server.Controllers
     public class VectorsController : ControllerBase
     {
 
-        private readonly ILogger<PointsController> logger;
+        private readonly ILogger<VectorsController> logger;
 
-        public VectorsController(ILogger<PointsController> logger)
+        public VectorsController(ILogger<VectorsController> logger)
         {
             this.logger = logger;
         }
@@ -23,7 +23,7 @@ namespace Basics.Web.Server.Controllers
         public IEnumerable<Vector2D> Get()
         {
             var rng = new Random();
-            return Enumerable.Range(1, 10).Select(index => new Vector2D(rng.NextDouble(), rng.NextDouble())).ToList();
+            return Enumerable.Range(1, 10).Select(_ => new Vector2D(rng.NextDouble(), rng.NextDouble())).ToList();
         }
     }
 }

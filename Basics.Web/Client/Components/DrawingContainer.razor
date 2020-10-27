@@ -28,15 +28,21 @@
         }
     }
 
-    public async Task DrawPoint(Basics.Geometry.Point2D point)
+    public async Task DrawPoint(Basics.Geometry.Point2D point, double size = 5)
     {
         if (!string.IsNullOrWhiteSpace(myCanvas.Id))
-            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawPoint", point.X, point.Y, 5);
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawPoint", point.X, point.Y, size);
     }
 
     public async Task DrawVector(Basics.Geometry.Vector2D vector)
     {
         if (!string.IsNullOrWhiteSpace(myCanvas.Id))
-            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawVector", vector.X, vector.Y, 3);
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawVector", vector.X, vector.Y);
+    }
+
+    public async Task DrawRay(Basics.Geometry.Ray2D ray)
+    {
+        if (!string.IsNullOrWhiteSpace(myCanvas.Id))
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawRay", ray);
     }
 }

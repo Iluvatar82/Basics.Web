@@ -23,7 +23,7 @@ namespace Basics.Web.Server.Controllers
         public IEnumerable<Point2D> Get()
         {
             var rng = new Random();
-            return Enumerable.Range(1, 10).Select(index => new Point2D(rng.NextDouble(), rng.NextDouble())).ToList();
+            return Enumerable.Range(1, 10).Select(_ => new Point2D(rng.NextDouble(), rng.NextDouble())).ToList();
         }
     }
 }

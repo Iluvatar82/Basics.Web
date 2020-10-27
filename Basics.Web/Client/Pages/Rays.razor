@@ -1,14 +1,14 @@
-@page "/vectors"
+@page "/rays"
 
 @using Basics.Geometry
 @using Basics.Web.Components
 
 @inject HttpClient Http
 
-<h1>Vectors...</h1>
+<h1>Rays...</h1>
 <p>Fetched from the server.</p>
 
-@if (vectors == null)
+@if (rays == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -18,19 +18,19 @@ else
         <thead>
             <tr>
                 <th>Number</th>
-                <th>X-Value</th>
-                <th>Y-Value</th>
+                <th>Origin</th>
+                <th>Direction</th>
                 <th>Summary</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var vector in vectors)
+            @foreach (var ray in rays)
             {
                 <tr>
-                    <td>@vectors.IndexOf(vector)</td>
-                    <td>@vector.X</td>
-                    <td>@vector.Y</td>
-                    <td>@vector</td>
+                    <td>@rays.IndexOf(ray)</td>
+                    <td>@ray.Origin</td>
+                    <td>@ray.Direction</td>
+                    <td>@ray</td>
                 </tr>
             }
         </tbody>
@@ -41,13 +41,18 @@ else
 
 @code {
     private DrawingContainer myDrawingContainer;
-    private List<Vector2D> vectors;
+    private List<Ray2D> rays;
+    private List<Point2D> intersections;
     private bool handlerAdded = false;
 
     protected override async Task OnInitializedAsync()
     {
         if (myDrawingContainer == null)
-            vectors = await Http.GetFromJsonAsync<List<Vector2D>>("Vectors");
+        {
+            rays = await Http.GetFromJsonAsync<List<Ray2D>>("Rays");
+            var intersectionResponse = await Http.PostAsJsonAsync<List<Ray2D>>( "Rays/Intersections", rays);
+            intersections = await intersectionResponse.Content.ReadFromJsonAsync<List<Point2D>>();
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -61,10 +66,13 @@ else
 
     private async Task Draw()
     {
-        if (myDrawingContainer == null || vectors == null)
+        if (myDrawingContainer == null || rays == null)
             return;
 
-        foreach (var vector in vectors)
-            await myDrawingContainer.DrawVector(vector);
+        foreach (var ray in rays)
+            await myDrawingContainer.DrawRay(ray);
+
+        foreach (var intersection in intersections)
+            await myDrawingContainer.DrawPoint(intersection, 6);
     }
 }
