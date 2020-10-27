@@ -19,7 +19,17 @@ function drawPoint(x, y, size) {
     ctx.fill();
 }
 
+function drawVector(xto, yto, size) {
+    ctx.strokeStyle = '#fff';
+    drawPoint(xto, yto, size)
+    ctx.beginPath();
+    ctx.moveTo(0, height);
+    ctx.lineTo(width * xto, height * (1 - yto));
+    ctx.stroke();
+}
+
 window.DrawingFunctions = {
     Setup: (name) => { loadScene(name); },
     DrawPoint: (x, y, size = 3) => { drawPoint(x, y, size); },
+    DrawVector: (x, y, size = 3) => { drawVector(x, y, size); },
 };

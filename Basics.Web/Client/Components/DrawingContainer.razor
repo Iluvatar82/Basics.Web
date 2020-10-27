@@ -33,4 +33,10 @@
         if (!string.IsNullOrWhiteSpace(myCanvas.Id))
             await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawPoint", point.X, point.Y, 5);
     }
+
+    public async Task DrawVector(Basics.Geometry.Vector2D vector)
+    {
+        if (!string.IsNullOrWhiteSpace(myCanvas.Id))
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawVector", vector.X, vector.Y, 3);
+    }
 }

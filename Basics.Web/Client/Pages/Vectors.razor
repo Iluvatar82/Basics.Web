@@ -1,0 +1,70 @@
+@page "/vectors"
+
+@using Basics.Geometry
+@using Basics.Web.Components
+
+@inject HttpClient Http
+
+<h1>Points...</h1>
+<p>Fetched from the server.</p>
+
+@if (vectors == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>X-Value</th>
+                <th>Y-Value</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vector in vectors)
+            {
+                <tr>
+                    <td>@vectors.IndexOf(vector)</td>
+                    <td>@vector.X</td>
+                    <td>@vector.Y</td>
+                    <td>@vector</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <DrawingContainer @ref="myDrawingContainer" Width="1280" Height="720"></DrawingContainer>
+}
+
+@code {
+    private DrawingContainer myDrawingContainer;
+    private List<Vector2D> vectors;
+    private bool handlerAdded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (myDrawingContainer == null)
+            vectors = await Http.GetFromJsonAsync<List<Vector2D>>("Vectors");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender && !handlerAdded)
+        {
+            myDrawingContainer.ControlReady += async (s, e) => await Draw();
+            handlerAdded = true;
+        }
+    }
+
+    private async Task Draw()
+    {
+        if (myDrawingContainer == null || vectors == null)
+            return;
+
+        foreach (var vector in vectors)
+            await myDrawingContainer.DrawVector(vector);
+    }
+}
