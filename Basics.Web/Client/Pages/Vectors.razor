@@ -50,7 +50,7 @@ else
             vectors = await Http.GetFromJsonAsync<List<Vector2D>>("Vectors");
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender && !handlerAdded)
         {
@@ -65,6 +65,6 @@ else
             return;
 
         foreach (var vector in vectors)
-            await myDrawingContainer.DrawVector(vector);
+            await myDrawingContainer.DrawVectorNormalized(vector);
     }
 }

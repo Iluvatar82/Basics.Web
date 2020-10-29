@@ -5,7 +5,6 @@
 
 @code {
     private ElementReference myCanvas = default;
-
     public event EventHandler ControlReady;
 
 
@@ -28,21 +27,56 @@
         }
     }
 
+    public async Task ClearFrame()
+    {
+        await JSRuntime.InvokeVoidAsync("DrawingFunctions.Clear");
+    }
+
+    public async Task DrawPointNormalized(Basics.Geometry.Point2D point, double size = 5)
+    {
+        if (!string.IsNullOrWhiteSpace(myCanvas.Id))
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawPointNormalized", point.X, point.Y, size);
+    }
+
     public async Task DrawPoint(Basics.Geometry.Point2D point, double size = 5)
     {
         if (!string.IsNullOrWhiteSpace(myCanvas.Id))
             await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawPoint", point.X, point.Y, size);
     }
 
-    public async Task DrawVector(Basics.Geometry.Vector2D vector)
+    public async Task DrawPoints(List<Basics.Geometry.Point2D> points, double size = 5)
     {
         if (!string.IsNullOrWhiteSpace(myCanvas.Id))
-            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawVector", vector.X, vector.Y);
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawPoints", points, size);
+    }
+
+    public async Task DrawVectorNormalized(Basics.Geometry.Vector2D vector)
+    {
+        if (!string.IsNullOrWhiteSpace(myCanvas.Id))
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawVectorNormalized", vector.X, vector.Y);
+    }
+
+    public async Task DrawRayNormalized(Basics.Geometry.Ray2D ray)
+    {
+        if (!string.IsNullOrWhiteSpace(myCanvas.Id))
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawRayNormalized", ray);
     }
 
     public async Task DrawRay(Basics.Geometry.Ray2D ray)
     {
         if (!string.IsNullOrWhiteSpace(myCanvas.Id))
             await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawRay", ray);
+    }
+
+    public async Task DrawRays(List<Basics.Geometry.Ray2D> rays)
+    {
+        if (!string.IsNullOrWhiteSpace(myCanvas.Id))
+            await JSRuntime.InvokeVoidAsync("DrawingFunctions.DrawRays", rays);
+    }
+
+    public async Task DrawAnimatedObjects(List<Basics.Web.Animation.Animatable> animationObjects)
+    {
+        await DrawPoints(animationObjects.Select(a => a.Position).ToList(), 3);
+        await DrawRays(animationObjects.Select(a => a.ForceToDraw).ToList());
     }
 }

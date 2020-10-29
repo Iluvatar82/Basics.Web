@@ -55,7 +55,7 @@ else
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender && !handlerAdded)
         {
@@ -70,9 +70,9 @@ else
             return;
 
         foreach (var ray in rays)
-            await myDrawingContainer.DrawRay(ray);
+            await myDrawingContainer.DrawRayNormalized(ray);
 
         foreach (var intersection in intersections)
-            await myDrawingContainer.DrawPoint(intersection, 6);
+            await myDrawingContainer.DrawPointNormalized(intersection, 6);
     }
 }

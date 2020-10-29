@@ -1,0 +1,59 @@
+@page "/animation1"
+
+@using System.Threading
+@using Basics.Web.Animation
+@using Basics.Web.Components
+
+@inject HttpClient Http
+
+<h1>The first animation...</h1>
+<p>Calculated in C#...</p>
+
+@if (animationObjects == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <DrawingContainer @ref="myDrawingContainer" Width="720" Height="720"></DrawingContainer>
+}
+
+@code {
+    private DrawingContainer myDrawingContainer;
+    private List<Animatable> animationObjects;
+    private bool handlerAdded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (myDrawingContainer == null)
+            animationObjects = await Http.GetFromJsonAsync<List<Animatable>>("Animatable");
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender && !handlerAdded)
+        {
+            myDrawingContainer.ControlReady += async (s, e) => await StartAnimation();
+            handlerAdded = true;
+        }
+    }
+
+    private async Task StartAnimation()
+    {
+        if (myDrawingContainer == null || animationObjects == null)
+            return;
+        do
+        {
+            await myDrawingContainer.ClearFrame();
+            foreach (var animationsObject in animationObjects)
+                animationsObject.Step();
+
+            await myDrawingContainer.DrawAnimatedObjects(animationObjects);
+            //foreach (var animationsObject in animationObjects)
+            //    await myDrawingContainer.DrawAnimatedObject(animationsObject);
+
+            await Task.Delay(1).ConfigureAwait(false);
+        }
+        while (true);
+    }
+}

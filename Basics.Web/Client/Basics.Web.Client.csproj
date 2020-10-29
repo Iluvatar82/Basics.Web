@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Basics\Basics\Basics.csproj" />
+    <ProjectReference Include="..\..\Animation\Animation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
