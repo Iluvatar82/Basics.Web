@@ -38,5 +38,16 @@ namespace Basics.Web.Animation
             if (Position.Y < 0 || Position.Y > max)
                 Force.Y *= -1;
         }
+
+        public void StepToCenter()
+        {
+            var vectorToCenter = new Vector2D(360, 360) - (Vector2D)Position;
+            vectorToCenter.Normalize();
+
+            Force += vectorToCenter * 0.05;
+            Force.Constrain(5.0);
+
+            Step();
+        }
     }
 }

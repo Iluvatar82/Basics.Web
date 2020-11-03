@@ -1,4 +1,4 @@
-@page "/animation1"
+﻿@page "/animation2"
 
 @implements IDisposable
 @using Basics.Web.Animation
@@ -6,7 +6,7 @@
 
 @inject HttpClient Http
 
-<h1>The first animation...</h1>
+<h1>Animation to the Center</h1>
 <p>Calculated in C#...</p>
 
 @if (animationObjects == null)
@@ -47,7 +47,7 @@ else
         {
             await myDrawingContainer.ClearFrame();
             foreach (var animationsObject in animationObjects)
-                animationsObject.Step();
+                animationsObject.StepToCenter();
 
             await myDrawingContainer.DrawAnimatedObjects(animationObjects);
             await Task.Delay(1).ConfigureAwait(false);
