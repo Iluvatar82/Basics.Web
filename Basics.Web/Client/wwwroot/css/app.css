@@ -136,10 +136,10 @@ app {
     top: 0.5rem;
 }
 
-/*canvas {
-    background-color: #000;
+svg {
+    background: #000;
 }
-*/
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;

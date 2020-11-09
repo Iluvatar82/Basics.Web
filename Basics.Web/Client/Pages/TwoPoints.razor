@@ -1,0 +1,83 @@
+@page "/twopoints"
+
+@using Basics.Geometry
+@using Basics.Web.Components
+
+@inject HttpClient Http
+
+<h1>Points...</h1>
+<p>Fetched from the server.</p>
+
+@if (points == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>X-Value</th>
+                <th>Y-Value</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var point in points)
+            {
+                <tr>
+                    <td>@points.IndexOf(point)</td>
+                    <td>@point.X</td>
+                    <td>@point.Y</td>
+                    <td>@point</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <TwoDrawingContainer @ref="myDrawingContainer" Width="720" Height="720"></TwoDrawingContainer>
+}
+
+@code {
+    private TwoDrawingContainer myDrawingContainer;
+    private List<Point2D> points;
+    private bool handlerAdded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (myDrawingContainer == null)
+            points = await Http.GetFromJsonAsync<List<Point2D>>("Points");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender && !handlerAdded)
+        {
+            myDrawingContainer.ControlReady += async (s, e) => await Draw();
+            handlerAdded = true;
+            await AnimatePoints();
+        }
+    }
+
+    private async Task Draw()
+    {
+        if (myDrawingContainer == null || points == null)
+            return;
+
+        foreach (var point in points)
+            await myDrawingContainer.DrawPointNormalized(point);
+
+        await myDrawingContainer.UpdateFrame();
+    }
+
+    private async Task AnimatePoints()
+    {
+        for (var i = 0; i < 100; i++)
+        {
+            points = await Http.GetFromJsonAsync<List<Point2D>>("Points");
+            StateHasChanged();
+            await Draw();
+        }
+    }
+}

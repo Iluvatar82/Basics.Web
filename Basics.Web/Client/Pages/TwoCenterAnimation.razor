@@ -1,0 +1,63 @@
+﻿@page "/twoanimation2"
+
+@implements IDisposable
+@using Basics.Web.Animation
+@using Basics.Web.Components
+
+@inject HttpClient Http
+
+<h1>Animation to the Center</h1>
+<p>Calculated in C#...</p>
+
+@if (animationObjects == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <TwoDrawingContainer @ref="myDrawingContainer" Width="720" Height="720"></TwoDrawingContainer>
+}
+
+@code {
+    private TwoDrawingContainer myDrawingContainer;
+    private List<Animatable> animationObjects;
+    private bool handlerAdded = false;
+    private bool animate = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (myDrawingContainer == null)
+            animationObjects = await Http.GetFromJsonAsync<List<Animatable>>("Animatable");
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender && !handlerAdded)
+        {
+            myDrawingContainer.ControlReady += async (s, e) => await StartAnimation();
+            handlerAdded = true;
+        }
+    }
+
+    private async Task StartAnimation()
+    {
+        if (myDrawingContainer == null || animationObjects == null)
+            return;
+        do
+        {
+            await myDrawingContainer.ClearFrame();
+            foreach (var animationsObject in animationObjects)
+                animationsObject.StepToCenter();
+
+            await myDrawingContainer.DrawAnimatedObjects(animationObjects);
+            await myDrawingContainer.UpdateFrame();
+            await Task.Delay(1).ConfigureAwait(false);
+        }
+        while (animate);
+    }
+
+    void IDisposable.Dispose()
+    {
+        animate = false;
+    }
+}
